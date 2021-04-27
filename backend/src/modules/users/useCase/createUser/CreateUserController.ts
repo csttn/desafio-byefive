@@ -6,13 +6,13 @@ async function CreateUserController(request: Request, response: Response) {
   const { name, email, password } = request.body;
 
   if (name === "" || email === "" || password === "") {
-    throw new AppError("Dados inválidos", 406);
+    throw new AppError("Invalid data", 406);
   }
 
   try {
     await CreateUserUseCase({ email, name, password });
   } catch (error) {
-    throw new AppError("Erro ao salvar usuário");
+    throw new AppError("Error saving user");
   }
 
   return response.status(201).send();
