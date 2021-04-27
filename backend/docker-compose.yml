@@ -8,10 +8,11 @@ services:
     ports:
       - 27017:27017
     environment:
-      - MONGO_INITDB_ROOT_USERNAME=root
-      - MONGO_INITDB_ROOT_PASSWORD=password
+      # - MONGO_INITDB_ROOT_USERNAME=root
+      # - MONGO_INITDB_ROOT_PASSWORD=password
       - MONGO_INITDB_DATABASE=moneydb
-
+    volumes:
+      - mongo:/data/mongo
   app:
     build: .
     container_name: money-api
@@ -25,3 +26,6 @@ services:
       - mongo
     depends_on:
       - mongo
+volumes:
+  mongo:
+    driver: local
