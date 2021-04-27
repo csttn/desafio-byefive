@@ -1,5 +1,7 @@
 import express, { NextFunction, Request, Response } from "express";
 
+import cors from "cors";
+
 import { AppError } from "./errors/AppError";
 import "express-async-errors";
 
@@ -26,6 +28,12 @@ app.use(
       message: `Internal server error -  ${err.message}`,
     });
   }
+);
+
+app.use(
+  cors({
+    origin: "http://localhost:3000",
+  })
 );
 
 app.listen(3333, () => console.log("Server is running in port 3333"));

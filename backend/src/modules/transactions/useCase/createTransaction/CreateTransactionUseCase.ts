@@ -11,7 +11,7 @@ async function CreateTransactionUseCase({
   type,
   user_id,
 }: ICreateTransactionDTO) {
-  //buscar usuario para injetar transactio na lista dele
+  //buscar usuario para injetar transaction na lista dele
   const _id = user_id;
 
   const user = await User.findById(_id).exec();
@@ -29,7 +29,7 @@ async function CreateTransactionUseCase({
   // salvando trasnaction
   await transaction.save();
 
-  // adicionando referencia d atransaction ao usuario
+  // adicionando referencia da transaction ao usuario
   user.transactions.push(transaction);
 
   await user.save();

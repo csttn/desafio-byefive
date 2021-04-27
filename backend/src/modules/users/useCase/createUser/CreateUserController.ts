@@ -12,7 +12,7 @@ async function CreateUserController(request: Request, response: Response) {
   try {
     await CreateUserUseCase({ email, name, password });
   } catch (error) {
-    throw new AppError("Error saving user");
+    throw new AppError(error);
   }
 
   return response.status(201).send();

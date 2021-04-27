@@ -20,8 +20,8 @@ export async function ensureAuthenticated(
     throw new AppError("Token missing", 401);
   }
 
-  //trasnformando string em array, separando posiçĩoes por espacõs na string
-  //selecionando a segunda posição onde se encontra o token, (Baerer "Token")
+  // transforming string into array, separating positions by spaces in the string
+  // selecting the second position where the token is located, (Baerer "Token")
   const [, token] = authHeader.split(" ");
 
   try {
@@ -36,7 +36,7 @@ export async function ensureAuthenticated(
       throw new AppError("User not Exists", 401);
     }
 
-    // adicionando Id do usuario autenticado dentro do request
+    // adding authenticated user id within the request
     request.user = {
       _id,
     };
