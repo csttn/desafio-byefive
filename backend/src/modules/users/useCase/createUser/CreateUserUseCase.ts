@@ -5,10 +5,10 @@ import { v4 as uuidV4 } from "uuid";
 import { AppError } from "../../../../errors/AppError";
 
 async function CreateUserUseCase({ email, name, password }: ICreateUserDTO) {
-  // const userAlreadyExists = await User.findOne({ email });
-  // if (userAlreadyExists) {
-  //   throw new AppError("User already exists", 204);
-  // }
+  const userAlreadyExists = await User.findOne({ email });
+  if (userAlreadyExists) {
+    throw new AppError("User already exists", 401);
+  }
   const passwordHash = await hash(password, 8);
   const user = new User();
   user.id = uuidV4();

@@ -9,11 +9,7 @@ async function CreateUserController(request: Request, response: Response) {
     throw new AppError("Invalid data", 406);
   }
 
-  try {
-    await CreateUserUseCase({ email, name, password });
-  } catch (error) {
-    throw new AppError(error);
-  }
+  await CreateUserUseCase({ email, name, password });
 
   return response.status(201).send();
 }

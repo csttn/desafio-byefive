@@ -10,6 +10,7 @@ interface IRequest {
 
 async function AuthenticatedUserUseCase({ userEmail, password }: IRequest) {
   //buscando usuario no banco
+
   const user = await User.findOne({ email: userEmail });
 
   // validando usuário existente
