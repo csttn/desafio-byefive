@@ -1,6 +1,9 @@
 import { FormEvent, useState } from "react";
 import Modal from "react-modal";
 
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+
 import { Container } from "./styles";
 import { useTransactions } from "../hooks/useTransactions";
 
@@ -21,7 +24,19 @@ export function AuthenticatedModal({
   async function handleSubmitAuthenticateUser(event: FormEvent) {
     event.preventDefault();
 
+    function validateEmail(email: string) {
+      const re = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+      return re.test(String(email).toLowerCase());
+    }
+
+    const emailValidate = validateEmail(email);
+
+    if (!emailValidate) {
+      return toast.error("Email inválido");
+    }
+
     handleAuthentication({ email, password });
+
     setEmail("");
     setPassword("");
 
@@ -37,6 +52,7 @@ export function AuthenticatedModal({
         className="react-modal-content"
         closeTimeoutMS={1000}
       >
+        <ToastContainer />
         <button
           type="button"
           className="react-modal-close"

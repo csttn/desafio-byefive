@@ -7,6 +7,9 @@ import React, {
 } from "react";
 import { api } from "../../services/api";
 
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+
 export interface TransactionItemProps {
   id: number;
   title: string;
@@ -131,9 +134,9 @@ export function TransactionProvider({ children }: TransactionsProviderProps) {
           },
         }
       );
-      console.log(response);
+      toast(response.statusText);
     } catch (e) {
-      console.log(e);
+      toast.error(e);
     }
   }
 
