@@ -33,6 +33,17 @@ async function CreateTransactionUseCase({
   user.transactions.push(transaction);
 
   await user.save();
+
+  const returnTransaction = {
+    id: transaction.id,
+    title: transaction.title,
+    type: transaction.type,
+    category: transaction.category,
+    amount: transaction.amount,
+    createdAt: transaction.createdAt,
+  };
+
+  return returnTransaction;
 }
 
 export { CreateTransactionUseCase };

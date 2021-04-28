@@ -2,16 +2,15 @@ import { User } from "../../repositories/implementations/schemas/UserSchema";
 import { AppError } from "../../../../errors/AppError";
 import { compare } from "bcrypt";
 import { sign } from "jsonwebtoken";
-import { request } from "express";
 
 interface IRequest {
-  email: string;
+  userEmail: string;
   password: string;
 }
 
-async function AuthenticatedUserUseCase({ email, password }: IRequest) {
+async function AuthenticatedUserUseCase({ userEmail, password }: IRequest) {
   //buscando usuario no banco
-  const user = await User.findOne({ email: email });
+  const user = await User.findOne({ email: userEmail });
 
   // validando usuário existente
   if (!user) {
@@ -41,8 +40,19 @@ async function AuthenticatedUserUseCase({ email, password }: IRequest) {
 
   // valores do usuario armazenados no token, e expiração de 1 dia
 
+  //tirando apenas informações necessária spara o frontend
+  const { name, email, _id } = user;
+
+  const data = await User.find({ _id }).populate("transactions");
+
+  const userInfo = {
+    name,
+    email,
+    userTransactions: data[0],
+  };
+
   return {
-    user,
+    userInfo,
     token,
   };
 }

@@ -14,6 +14,13 @@ export const Content = styled.div`
   align-items: center;
   justify-content: space-between;
 
+  div {
+    display: flex;
+    align-items: center;
+    justify-content: space-space-around;
+    margin: 2rem;
+  }
+
   button {
     font-size: 1rem;
     color: #fff;
@@ -23,6 +30,13 @@ export const Content = styled.div`
     border-radius: 0.25rem;
     height: 3rem;
     transition: filter 0.2s;
+
+    &:first-child {
+      margin-right: 2rem;
+    }
+    &:nth-child(2) {
+      margin-right: 2rem;
+    }
 
     &:hover {
       filter: brightness(0.9);

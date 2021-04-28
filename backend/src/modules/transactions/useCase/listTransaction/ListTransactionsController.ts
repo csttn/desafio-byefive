@@ -7,6 +7,7 @@ async function ListTransactionsController(
   response: Response
 ) {
   const { _id } = request.user;
+  console.log(request.headers);
 
   try {
     const transactions = await ListTransactionsUseCase(_id);

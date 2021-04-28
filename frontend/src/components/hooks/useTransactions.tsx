@@ -6,7 +6,6 @@ import React, {
   useState,
 } from "react";
 import { api } from "../../services/api";
-import axios from "axios";
 
 export interface TransactionItemProps {
   id: number;
@@ -27,11 +26,37 @@ interface TransactionInput {
   category: string;
   amount: number;
 }
+interface UserInput {
+  name: string;
+  email: string;
+  password: string;
+}
+
+interface AuthenticationInput {
+  email: string;
+  password: string;
+}
+
+interface IResponseAuthenticated {
+  userInfo: {
+    userTransactions: {
+      transactions: [];
+    };
+    _id: string;
+    id: string;
+    email: string;
+    name: string;
+  };
+  token: string;
+}
 
 interface TransactionsContextProps {
   transactions: TransactionItemProps[];
   createTransaction: (trasaction: TransactionInput) => Promise<void>;
-  token: string;
+  handleAuthentication: (userAuth: AuthenticationInput) => Promise<void>;
+  handleCreateUser: (UserData: UserInput) => Promise<void>;
+  tokenUser: string;
+  handleLogout: () => void;
 }
 
 const TransactionsContext = createContext<TransactionsContextProps>(
@@ -40,41 +65,88 @@ const TransactionsContext = createContext<TransactionsContextProps>(
 
 export function TransactionProvider({ children }: TransactionsProviderProps) {
   const [transactions, setTransactions] = useState<TransactionItemProps[]>([]);
-  const [token, setToken] = useState("");
+  const [tokenUser, setTokenUser] = useState("");
 
   useEffect(() => {
-    axios({
-      method: "get",
-      url: `http://localhost:3333/transactions/`,
-      headers: {
-        authorization: `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpYXQiOjE2MTk1NDk2MzUsImV4cCI6MTYxOTYzNjAzNSwic3ViIjoiNjA4ODVkYjVmM2JjNmEwMmU1ZGVkNWVhIn0.u3kCpI-MhfDjVYqnUnISdi6Jt8Pc2F2OFdzzly9Pfx4`,
-        "Access-Control-Allow-Origin": "*",
-      },
-    })
-      .then((res) => {
-        console.log(res.data);
-      })
-      .catch((err) => {
-        console.log("err with mailchimp request", err);
-      });
-
-    // api.get("/transactions").then(({ data }) => console.log(data));
-  }, []);
+    console.log(tokenUser);
+  }, [tokenUser]);
 
   async function createTransaction(transactionInput: TransactionInput) {
-    const response = await api.post("/transactions", {
-      ...transactionInput,
-      createdAt: new Date(),
+    const response = await api.post("/transactions", transactionInput, {
+      headers: {
+        Authorization: `Bearer ${tokenUser}`,
+        "Access-Control-Allow-Origin": "*",
+      },
     });
 
-    const { transaction } = response.data;
+    const transaction = response.data;
 
     setTransactions([...transactions, transaction]);
   }
 
+  async function handleAuthentication({
+    email,
+    password,
+  }: AuthenticationInput) {
+    try {
+      const response = await api.post<IResponseAuthenticated>("/sessions", {
+        email,
+        password,
+      });
+
+      const { token, userInfo } = response.data;
+      const { userTransactions } = userInfo;
+
+      localStorage.setItem("tokenUser", JSON.stringify(token));
+
+      console.log(userTransactions.transactions, token);
+
+      setTokenUser(token);
+
+      setTransactions(userTransactions.transactions);
+      console.log(response);
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  function handleLogout() {
+    localStorage.clear();
+    setTokenUser("");
+    setTransactions([]);
+  }
+
+  async function handleCreateUser({ name, email, password }: UserInput) {
+    try {
+      const response = await api.post(
+        "/users/create",
+        {
+          name,
+          email,
+          password,
+        },
+        {
+          headers: {
+            "Access-Control-Allow-Origin": "*",
+          },
+        }
+      );
+      console.log(response);
+    } catch (e) {
+      console.log(e);
+    }
+  }
+
   return (
     <TransactionsContext.Provider
-      value={{ transactions, createTransaction, token }}
+      value={{
+        transactions,
+        createTransaction,
+        handleAuthentication,
+        handleCreateUser,
+        tokenUser,
+        handleLogout,
+      }}
     >
       {children}
     </TransactionsContext.Provider>

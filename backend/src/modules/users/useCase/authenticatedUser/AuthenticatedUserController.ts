@@ -7,7 +7,7 @@ async function AuthenticatedUserController(
 ): Promise<Response> {
   const { email, password } = request.body;
 
-  const token = await AuthenticatedUserUseCase({ email, password });
+  const token = await AuthenticatedUserUseCase({ userEmail: email, password });
 
   return response.json(token).send();
 }
